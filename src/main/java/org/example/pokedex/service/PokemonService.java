@@ -1,11 +1,14 @@
 package org.example.pokedex.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.example.pokedex.configs.ExternalApiException;
 import org.example.pokedex.model.Pokemon;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Iterator;
 
 @Service
 public class PokemonService {
@@ -19,11 +22,24 @@ public class PokemonService {
     public Pokemon getPokemon(String pokemonName){
         ObjectNode rawPokemon = restTemplate.getForObject(
                 "https://pokeapi.co/api/v2/pokemon-species/" + pokemonName, ObjectNode.class);
+        // TODO use a real POJO instead of ObjectNode
+        // TODO Write unit tests
+        // 2 tests for translation service
+        // 4 for pokemon service - 1 normal, 1 cave, 1 is legendary, 1 problem with api
         try{
             Pokemon pokemon = new Pokemon();
             pokemon.setName(rawPokemon.get("name").textValue());
-            String description = rawPokemon.get("flavor_text_entries").get(0).get("flavor_text").textValue();
-            pokemon.setDescription(description);
+            Iterator<JsonNode> it =  rawPokemon.withArray("flavor_text_entries").iterator();
+            String englishDescription = "";
+            while (it.hasNext()) {
+                JsonNode node = it.next();
+                if (node.has("language") && node.get("language").get("name").textValue().equals("en")) {
+                    englishDescription = node.get("flavor_text").textValue();
+                    break;
+                }
+            }
+            //String englishDescription = rawPokemon.get("flavor_text_entries").get(0).get("flavor_text").textValue();
+            pokemon.setDescription(englishDescription);
             pokemon.setHabitat(rawPokemon.get("habitat").get("name").textValue());
             pokemon.setIsLegendary(Boolean.parseBoolean(rawPokemon.get("is_legendary").textValue()));
             return pokemon;
