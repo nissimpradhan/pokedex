@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PokemonService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">pokedex</a> &gt; <a href="index.source.html" class="el_package">org.example.pokedex.service</a> &gt; <span class="el_source">PokemonService.java</span></div><h1>PokemonService.java</h1><pre class="source lang-java linenums">package org.example.pokedex.service;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.example.pokedex.configs.ExternalApiException;
+import org.example.pokedex.model.Pokemon;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Iterator;
+
+@Service
+<span class="fc" id="L14">public class PokemonService {</span>
+
+    @Autowired
+    RestTemplate restTemplate;
+
+    @Autowired
+    TranslationService translationService;
+
+    public Pokemon getPokemon(String pokemonName){
+<span class="fc" id="L23">        ObjectNode rawPokemon = restTemplate.getForObject(</span>
+                &quot;https://pokeapi.co/api/v2/pokemon-species/&quot; + pokemonName, ObjectNode.class);
+        try{
+<span class="fc" id="L26">            Pokemon pokemon = new Pokemon();</span>
+<span class="fc" id="L27">            pokemon.setName(rawPokemon.get(&quot;name&quot;).textValue());</span>
+<span class="fc" id="L28">            Iterator&lt;JsonNode&gt; it =  rawPokemon.withArray(&quot;flavor_text_entries&quot;).iterator();</span>
+<span class="fc" id="L29">            String englishDescription = &quot;&quot;;</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">            while (it.hasNext()) {</span>
+<span class="fc" id="L31">                JsonNode node = it.next();</span>
+<span class="pc bpc" id="L32" title="2 of 4 branches missed.">                if (node.has(&quot;language&quot;) &amp;&amp; node.get(&quot;language&quot;).get(&quot;name&quot;).textValue().equals(&quot;en&quot;)) {</span>
+<span class="fc" id="L33">                    englishDescription = node.get(&quot;flavor_text&quot;).textValue();</span>
+<span class="fc" id="L34">                    break;</span>
+                }
+<span class="nc" id="L36">            }</span>
+            //String englishDescription = rawPokemon.get(&quot;flavor_text_entries&quot;).get(0).get(&quot;flavor_text&quot;).textValue();
+<span class="fc" id="L38">            pokemon.setDescription(englishDescription);</span>
+<span class="fc" id="L39">            pokemon.setHabitat(rawPokemon.get(&quot;habitat&quot;).get(&quot;name&quot;).textValue());</span>
+<span class="fc" id="L40">            pokemon.setIsLegendary(Boolean.parseBoolean(rawPokemon.get(&quot;is_legendary&quot;).textValue()));</span>
+<span class="fc" id="L41">            return pokemon;</span>
+<span class="nc" id="L42">        } catch (Exception ex){</span>
+<span class="nc" id="L43">            throw new ExternalApiException(ex.getMessage());</span>
+        }
+    }
+
+    public Pokemon getTranslatedPokemon(String pokemonName){
+<span class="fc" id="L48">        Pokemon pokemon = getPokemon(pokemonName);</span>
+        try{
+<span class="pc bpc" id="L50" title="1 of 4 branches missed.">            if(pokemon.getHabitat().equals(&quot;cave&quot;) || pokemon.getIsLegendary()){</span>
+<span class="fc" id="L51">                pokemon.setDescription(translationService.getYodaTranslation(pokemon.getDescription()));</span>
+            } else {
+<span class="fc" id="L53">                pokemon.setDescription(translationService.getShakespeareTranslation(pokemon.getDescription()));</span>
+            }
+<span class="fc" id="L55">        } catch (Exception ex){</span>
+            // If you can’t translate the Pokemon’s description (for whatever reason 😉) then use the standard
+            //description
+<span class="fc" id="L58">        }</span>
+
+<span class="fc" id="L60">        return pokemon;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -22,10 +22,6 @@ public class PokemonService {
     public Pokemon getPokemon(String pokemonName){
         ObjectNode rawPokemon = restTemplate.getForObject(
                 "https://pokeapi.co/api/v2/pokemon-species/" + pokemonName, ObjectNode.class);
-        // TODO use a real POJO instead of ObjectNode
-        // TODO Write unit tests
-        // 2 tests for translation service
-        // 4 for pokemon service - 1 normal, 1 cave, 1 is legendary, 1 problem with api
         try{
             Pokemon pokemon = new Pokemon();
             pokemon.setName(rawPokemon.get("name").textValue());

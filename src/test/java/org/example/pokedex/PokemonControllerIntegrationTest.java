@@ -35,11 +35,11 @@ public class PokemonControllerIntegrationTest {
     @Test
     public void givenGolbat_getTranslatedPokemon_with_habitat_cave_success() throws Exception {
 
-        mvc.perform(get("/pokemon/golbat"))
+        mvc.perform(get("/pokemon/translated/golbat"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("golbat"))
                 .andExpect(jsonPath("$.isLegendary").value(false))
-                .andExpect(jsonPath("$.description").value("Once it strikes,\nit will not stop\ndraining energy\ffrom the victim\neven if it gets\ntoo heavy to fly."))
+                .andExpect(jsonPath("$.description").value("Once it strikes,It will not stop draining energy from the victim even if it gets too heavy to fly."))
                 .andExpect(jsonPath("$.habitat").value("cave"));
     }
 
