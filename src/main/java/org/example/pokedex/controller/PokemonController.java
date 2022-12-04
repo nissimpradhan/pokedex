@@ -25,4 +25,10 @@ public class PokemonController {
     public Pokemon getPokemon(@PathVariable String pokemonName){
         return pokemonService.getPokemon(pokemonName);
     }
+
+    @GetMapping("/translated/{pokemonName}")
+    @ResponseBody
+    public Pokemon getTranslatedPokemon(@PathVariable String pokemonName){
+        return pokemonService.getTranslatedPokemon(pokemonName);
+    }
 }
