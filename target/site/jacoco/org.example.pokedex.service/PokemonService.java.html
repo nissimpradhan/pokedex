@@ -20,9 +20,9 @@ import java.util.Iterator;
     TranslationService translationService;
 
     public Pokemon getPokemon(String pokemonName){
-<span class="fc" id="L23">        ObjectNode rawPokemon = restTemplate.getForObject(</span>
-                &quot;https://pokeapi.co/api/v2/pokemon-species/&quot; + pokemonName, ObjectNode.class);
         try{
+<span class="fc" id="L24">            ObjectNode rawPokemon = restTemplate.getForObject(</span>
+                    &quot;https://pokeapi.co/api/v2/pokemon-species/&quot; + pokemonName, ObjectNode.class);
 <span class="fc" id="L26">            Pokemon pokemon = new Pokemon();</span>
 <span class="fc" id="L27">            pokemon.setName(rawPokemon.get(&quot;name&quot;).textValue());</span>
 <span class="fc" id="L28">            Iterator&lt;JsonNode&gt; it =  rawPokemon.withArray(&quot;flavor_text_entries&quot;).iterator();</span>
@@ -39,8 +39,8 @@ import java.util.Iterator;
 <span class="fc" id="L39">            pokemon.setHabitat(rawPokemon.get(&quot;habitat&quot;).get(&quot;name&quot;).textValue());</span>
 <span class="fc" id="L40">            pokemon.setIsLegendary(Boolean.parseBoolean(rawPokemon.get(&quot;is_legendary&quot;).textValue()));</span>
 <span class="fc" id="L41">            return pokemon;</span>
-<span class="nc" id="L42">        } catch (Exception ex){</span>
-<span class="nc" id="L43">            throw new ExternalApiException(ex.getMessage());</span>
+<span class="fc" id="L42">        } catch (Exception ex){</span>
+<span class="fc" id="L43">            throw new ExternalApiException(ex.getMessage());</span>
         }
     }
 

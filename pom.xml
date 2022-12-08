@@ -124,7 +124,7 @@
                 </executions>
                 <configuration>
                     <excludes>
-                        <exclude>org/example/pokedex/model/*</exclude>
+                        <exclude>org/example/pokedex/model/**</exclude>
                     </excludes>
                 </configuration>
             </plugin>
