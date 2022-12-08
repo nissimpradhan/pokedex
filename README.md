@@ -36,7 +36,7 @@ to push the new changes you made into the current context
 ## Tests
 
 To view current test coverage of 95% please open `/target/site/jacoco/index.html`
-![Code coverage](https://htmlpreview.github.io/?https://github.com/nissimpradhan/pokedex/blob/main/target/site/jacoco/index.html)
+![Code coverage](target/site/jacoco/index.html)
 
 ![Code coverage Screenshot](img/code_coverage.jpg)
 
