@@ -20,9 +20,9 @@ public class PokemonService {
     TranslationService translationService;
 
     public Pokemon getPokemon(String pokemonName){
-        ObjectNode rawPokemon = restTemplate.getForObject(
-                "https://pokeapi.co/api/v2/pokemon-species/" + pokemonName, ObjectNode.class);
         try{
+            ObjectNode rawPokemon = restTemplate.getForObject(
+                    "https://pokeapi.co/api/v2/pokemon-species/" + pokemonName, ObjectNode.class);
             Pokemon pokemon = new Pokemon();
             pokemon.setName(rawPokemon.get("name").textValue());
             Iterator<JsonNode> it =  rawPokemon.withArray("flavor_text_entries").iterator();

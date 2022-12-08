@@ -2,6 +2,7 @@ package org.example.pokedex;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.example.pokedex.configs.ExternalApiException;
 import org.example.pokedex.model.Pokemon;
 import org.example.pokedex.service.PokemonService;
 import org.example.pokedex.service.TranslationService;
@@ -22,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 
@@ -89,6 +91,17 @@ public class PokemonServiceTest {
         assertThat(pokemon.getIsLegendary()).isEqualTo(false);
         assertThat(pokemon.getDescription()).isEqualTo("Custom modified text from mock");
         assertThat(pokemon.getName()).isEqualTo("mewtwo");
+    }
+
+    @Test
+    public void getPokemon_pokeapi_has_problems(){
+
+        Mockito.when(restTemplate.getForObject("https://pokeapi.co/api/v2/pokemon-species/mewtwo", ObjectNode.class))
+                .thenThrow(new RuntimeException("problem with poke api"));
+
+        assertThrows(ExternalApiException.class, () -> {
+            pokemonService.getPokemon("mewtwo");
+        });
     }
 
     private <T> T readObjectFromFile(final String fileName, final Class<T> clazz) {
